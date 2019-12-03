@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,6 +39,7 @@ public class CalenderDaoImpl implements CalenderDao {
 	@Override
 	public EmployeesOnLeave getEmployeesOnLeave(Date date) {
 		Map<String, Set<String>> leaveTracker = leaveRepository.getLeaveTracker();
+		keyFormat.setTimeZone(TimeZone.getTimeZone("GMT+5:30"));
 		String key = keyFormat.format(date);
 		if (leaveTracker.containsKey(key)) {
 			List<Employee> employees = new ArrayList<>();
@@ -53,8 +55,10 @@ public class CalenderDaoImpl implements CalenderDao {
 	@Override
 	public Map<String, List<Date>> getEmployeeLeaveMap(Date startDate, Date endDate) {
 		Map<String, List<Date>> leaveDataMap = new HashMap<>();
+		keyFormat.setTimeZone(TimeZone.getTimeZone("GMT+5:30"));
 		Date currentDate = startDate;
 		Calendar calender = Calendar.getInstance();
+		calender.setTimeZone(TimeZone.getTimeZone("GMT+5:30"));
 		String key = keyFormat.format(currentDate);
 		do {
 			if (leaveRepository.getLeaveTracker().containsKey(key)) {
@@ -84,8 +88,10 @@ public class CalenderDaoImpl implements CalenderDao {
 	@Override
 	public List<Date> getEmployeeLeaveDates(String employeeId, Date startDate, Date endDate) {
 		List<Date> leaveDateList = new ArrayList<>();
+		keyFormat.setTimeZone(TimeZone.getTimeZone("GMT+5:30"));
 		Date currentDate = startDate;
 		Calendar calender = Calendar.getInstance();
+		calender.setTimeZone(TimeZone.getTimeZone("GMT+5:30"));
 		String key = keyFormat.format(currentDate);
 
 		do {

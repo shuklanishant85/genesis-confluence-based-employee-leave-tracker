@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
@@ -73,6 +74,7 @@ public class LeaveRepository {
 
 	@PostConstruct
 	public void initialize() {
+		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+5:30"));
 		if (null == leaveTracker) {
 			leaveTracker = new HashMap<>();
 			Calendar calendar = Calendar.getInstance();
@@ -115,8 +117,8 @@ public class LeaveRepository {
 				}
 				Calendar calendar = Calendar.getInstance();
 				if (null != endDateNumeric && null != startDateNumeric) {
-					for (Date currentDate = startDateNumeric; currentDate.before(endDateNumeric); calendar
-							.setTime(currentDate), calendar.add(Calendar.DATE, 1), currentDate = calendar.getTime()) {
+					Date currentDate = startDateNumeric;
+					do {
 						String key = keyFormat.format(currentDate);
 						if (leaveTracker.containsKey(key)) {
 							leaveTracker.get(key).add(employee.getId());
@@ -125,7 +127,10 @@ public class LeaveRepository {
 							employeeSet.add(employee.getId());
 							leaveTracker.put(key, employeeSet);
 						}
-					}
+						calendar.setTime(currentDate);
+						calendar.add(Calendar.DATE, 1);
+						currentDate = calendar.getTime();
+					} while (currentDate.before(endDateNumeric));
 				}
 			}
 		}
